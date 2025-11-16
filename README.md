@@ -1,71 +1,90 @@
-# Gestor de Fábrica - Next.js y Prisma
+# BattleFit
 
-Aplicación de gestión integral para una fábrica, construida con Next.js, Tailwind CSS, ShadCN UI y Prisma con una base de datos PostgreSQL.
+BattleFit es una aplicación móvil que fusiona el fitness con un juego de rol (RPG). Los usuarios convierten su actividad física del mundo real en experiencia y mejoras para su avatar en el juego, compitiendo con amigos y completando desafíos.
 
-## Stack Tecnológico
+## 🚀 Cómo Empezar
 
-- **Framework:** Next.js (App Router)
-- **Lenguaje:** TypeScript
-- **ORM:** Prisma
-- **Base de Datos:** PostgreSQL
-- **Estilos:** Tailwind CSS
-- **Componentes UI:** ShadCN UI
-- **IA Generativa:** Google AI a través de Genkit
-- **Autenticación:** Basada en credenciales y JWT
-
-## Configuración del Proyecto
-
-1.  **Instalar dependencias:**
+1.  **Clonar el repositorio:**
     ```bash
-    npm install
+    git clone <URL_DEL_REPOSITORIO>
+    cd battlefit
     ```
 
-2.  **Configurar variables de entorno:**
-    -   Crea un archivo `.env` en la raíz del proyecto.
-    -   Añade la cadena de conexión de tu base de datos PostgreSQL y la clave de Google AI.
-
-    ```env
-    # PostgreSQL (puedes obtenerla de tu proveedor de BBDD, ej: AWS RDS, Supabase, etc.)
-    DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public&sslaccept=accept_invalid_certs"
-
-    # Google AI (Genkit)
-    GEMINI_API_KEY="..."
-
-    # Habilitar/Deshabilitar Middleware
-    MIDDLEWARE_ENABLED=true
-    ```
-    
-    **Nota sobre `sslaccept=accept_invalid_certs`**: Este parámetro se ha añadido para solucionar problemas de conexión en entornos de desarrollo que pueden no tener las librerías OpenSSL correctas. **No uses este parámetro en producción.**
-
-3.  **Ejecutar las migraciones de la base de datos:**
-    Este comando creará las tablas en tu base de datos según el esquema de Prisma.
+2.  **Instalar dependencias de Flutter:**
     ```bash
-    npx prisma migrate dev
+    flutter pub get
     ```
 
-4.  **Poblar la base de datos con datos de prueba (opcional):**
+3.  **Configurar Supabase:**
+    *   Crea un proyecto en [Supabase](https://supabase.com/).
+    *   Ve a la sección `SQL Editor` y ejecuta el script completo de `supabase_schema.sql` que se encuentra en la raíz de este proyecto.
+    *   Obtén tu URL y tu `anon key` desde la sección `API` en la configuración de tu proyecto de Supabase.
+    *   Reemplaza los valores de marcador de posición en `lib/main.dart` con tus credenciales reales:
+
+    ```dart
+    await Supabase.initialize(
+      url: 'TU_SUPABASE_URL',
+      anonKey: 'TU_SUPABASE_ANON_KEY',
+    );
+    ```
+
+4.  **Ejecutar la aplicación:**
     ```bash
-    npx prisma db seed
+    flutter run
     ```
 
-5.  **Ejecutar el servidor de desarrollo:**
-    ```bash
-    npm run dev
-    ```
-    La aplicación estará disponible en `http://localhost:9002`.
+## 📐 Arquitectura
 
-## Estructura del Proyecto
+El proyecto sigue los principios de **Arquitectura Limpia** para asegurar que el código sea desacoplado, escalable y fácil de mantener. La estructura se divide principalmente en tres capas:
 
--   `src/app`: Contiene las rutas y páginas de la aplicación (App Router).
--   `src/components`: Componentes de React reutilizables.
--   `src/lib`: Utilidades, cliente de Prisma y tipos.
--   `src/ai`: Flujos y configuración de Genkit para funcionalidades de IA.
--   `prisma`: Esquema de la base de datos, migraciones y script de seeder.
+-   **Presentation:** Contiene la UI (widgets, pantallas) y la lógica de presentación (Providers de Riverpod). Es la capa más externa y se encarga de mostrar los datos al usuario y capturar sus interacciones.
+-   **Domain:** Es el núcleo de la aplicación. Contiene la lógica de negocio pura (entidades, casos de uso, servicios como el `RPGEngine`) y no depende de ninguna otra capa.
+-   **Data:** Se encarga de la obtención y persistencia de los datos. Contiene las implementaciones de los repositorios, las fuentes de datos (locales o remotas como Supabase) y los modelos de datos.
 
-## Funcionalidades Principales
+## 📁 Estructura de Módulos
 
--   **Tablero de Control:** Resumen visual de métricas clave.
--   **Gestión de Ventas:** Creación y seguimiento de pedidos y clientes.
--   **Planificación de Producción:** Organización de la producción en lotes.
--   **Gestión de Despachos:** Generación de remitos.
--   **Roles y Permisos:** Control de acceso granular para diferentes tipos de usuario.
+La aplicación está organizada en módulos por funcionalidad, ubicados en `lib/src/features/`. Cada módulo sigue la estructura de Arquitectura Limpia internamente.
+
+-   `auth`: Autenticación (login, registro, social).
+-   `onboarding`: Flujo de bienvenida para nuevos usuarios.
+-   `health_sync`: Sincronización con Google Fit / Apple Health.
+-   `rpg_engine`: Lógica del juego (EXP, niveles, atributos).
+-   `challenges`: Gestión de misiones y recompensas.
+-   `ranking`: Tablas de clasificación.
+-   `profile`: Perfil de usuario y estadísticas.
+-   `store`: Tienda de elementos cosméticos.
+-   `core`: Componentes compartidos (tema, router, widgets).
+
+## 🧭 Navegación (Rutas)
+
+La navegación se gestiona con el paquete `go_router`. Las rutas principales están definidas en `lib/src/core/config/router/app_router.dart`.
+
+-   `/splash`: Pantalla de carga inicial.
+-   `/login`: Inicio de sesión.
+-   `/register`: Registro de nuevos usuarios.
+-   `/home`: Pantalla principal con navegación por pestañas (Actividad, Misiones, Perfil, Tienda).
+
+## 🗄️ Modelos de Datos
+
+Los modelos de datos se dividen en:
+
+-   **Entidades (Domain):** Representaciones puras de los objetos de negocio (ej. `PlayerStats`).
+-   **Modelos (Data):** Representaciones de los datos tal como provienen de la fuente (ej. un modelo para una tabla de Supabase).
+
+Las tablas principales en Supabase son:
+-   `users_profile`
+-   `daily_activity`
+-   `challenges`
+-   `user_challenges`
+-   `ranking`
+
+## 🔄 Flujo de Datos
+
+El flujo de datos sigue un patrón unidireccional para mayor claridad y predictibilidad, gestionado por **Riverpod**.
+
+1.  **UI (Widget):** Un widget solicita datos o dispara una acción a través de un `Provider`.
+2.  **Provider (Presentation):** El `Provider` invoca un caso de uso (usecase) del dominio.
+3.  **Usecase (Domain):** El caso de uso contiene la lógica de negocio y utiliza un `Repository` para acceder a los datos.
+4.  **Repository (Domain/Data):** El `Repository` es una interfaz en el dominio, implementada en la capa de datos. Su implementación decide si obtener los datos de una fuente remota (Supabase) o local.
+5.  **Data Source (Data):** La fuente de datos interactúa directamente con el servicio externo (ej. `SupabaseClient`).
+6.  **Retorno:** Los datos fluyen de vuelta a través de las capas, actualizando el estado en el `Provider` y, finalmente, reconstruyendo la UI.
