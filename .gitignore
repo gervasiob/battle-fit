@@ -1,45 +1,48 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
 /out/
 
-# production
-/build
+# Flutter
+.metadata
+.packages
+/.dart_tool/
+/build/
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/App.framework
+/ios/Flutter/engine.xcconfig
+/ios/Flutter/pod_runner.xcconfig
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/flutter_export_environment.sh
+.flutter-plugins
+.flutter-plugins-dependencies
 
-# misc
-.DS_Store
-*.pem
+# Android
+/android/app/src/main/java/io/flutter/plugins/
+/android/key.properties
+/android/local.properties
+/android/.gradle/
+/android/app/build/
+/android/gradlew
+/android/gradlew.bat
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# Web
+/web/
+/lib/generated_plugin_registrant.dart
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-.genkit/*
-# .env*
-
-# firebase
-firebase-debug.log
-firestore-debug.log
+# VS Code
+.vscode/
