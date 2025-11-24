@@ -3,23 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends ConsumerWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends ConsumerWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
-    ref.listen(authControllerProvider, (_, state) {
-      if (state != null) {
-        context.go('/home');
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Forgot Password'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -31,41 +24,25 @@ class LoginScreen extends ConsumerWidget {
               decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {
                 try {
                   await ref
                       .read(authControllerProvider.notifier)
-                      .signInWithPassword(
-                        emailController.text,
-                        passwordController.text,
-                      );
+                      .sendPasswordResetEmail(emailController.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Password reset link sent to your email')),
+                  );
+                  context.go('/login');
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(e.toString())),
                   );
                 }
               },
-              child: const Text('Login'),
-            ),
-            TextButton(
-              onPressed: () {
-                context.go('/register');
-              },
-              child: const Text('Don\'t have an account? Register'),
-            ),
-            TextButton(
-              onPressed: () {
-                context.go('/forgot-password');
-              },
-              child: const Text('Forgot Password?'),
+              child: const Text('Send Reset Link'),
             ),
           ],
         ),
